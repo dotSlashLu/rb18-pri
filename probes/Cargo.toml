@@ -1,0 +1,42 @@
+[package]
+name = "probes"
+version = "0.1.0"
+edition = '2018'
+
+[dependencies]
+cty = "0.2"
+# redbpf-macros = "2.3.0"
+redbpf-macros = { path = "/home/zhangqiang/proj/opensource/redbpf-xdp/redbpf-macros" }
+# redbpf-probes = "2.3.0"
+redbpf-probes = { path = "/home/zhangqiang/proj/opensource/redbpf-xdp/redbpf-probes" }
+memoffset = "0.6.5"
+
+[build-dependencies]
+cargo-bpf = { version = "2.3.0", default-features = false }
+
+[features]
+default = []
+probes = []
+
+[lib]
+path = "src/lib.rs"
+
+# [[bin]]
+# name = "openmonitor"
+# path = "src/openmonitor/main.rs"
+# required-features = ["probes"]
+
+[[bin]]
+name = "xdp"
+path = "src/xdp/main.rs"
+required-features = ["probes"]
+
+# [[bin]]
+# name = "fnat"
+# path = "src/fnat/main.rs"
+# required-features = ["probes"]
+# 
+# [[bin]]
+# name = "map_poc"
+# path = "src/map_poc/main.rs"
+# required-features = ["probes"]

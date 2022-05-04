@@ -1,0 +1,31 @@
+[package]
+name = "redbpf-tutorial"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# redbpf = { version = "2.3.0", features = ["load"] }
+redbpf = { path = "/home/zhangqiang/proj/opensource/redbpf-xdp/redbpf", features = ["load"] }
+# redbpf-probes = { version = "2.3.0" }
+redbpf-probes = { path = "/home/zhangqiang/proj/opensource/redbpf-xdp/redbpf-probes" }
+
+tokio = { version = "1.0", features = ["rt", "signal", "time", "io-util", "net", "sync"] }
+tracing-subscriber = "0.2"
+tracing = "0.1"
+futures = "0.3"
+
+probes = { path = "./probes" }
+
+[[bin]]
+name = "xdp-counter"
+path = "src/main2.rs"
+
+[[bin]]
+name = "xdp"
+path = "src/xdp.rs"
+
+[[bin]]
+name = "map_poc"
+path = "src/map_poc.rs"
