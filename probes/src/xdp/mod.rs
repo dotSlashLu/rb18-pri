@@ -1,5 +1,5 @@
 pub mod csum;
-pub mod csum_dpdk;
+pub mod conntrack;
 
 #[derive(Clone, Debug)]
 #[repr(C)]
