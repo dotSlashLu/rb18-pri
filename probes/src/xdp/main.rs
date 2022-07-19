@@ -7,6 +7,7 @@ use redbpf_probes::xdp::prelude::*;
 
 use probes::xdp::csum::*;
 use probes::xdp::{ClientInfo, LocalInfo};
+use probes::xdp::conntrack;
 
 program!(0xFFFFFFFE, "GPL");
 
@@ -121,43 +122,6 @@ fn process_l4_tcp(
             }
         }
 
-        // // saddr
-        // csum = csum_ipv4_l4(
-        //     csum,
-        //     (old_saddr << 16 & 0xffff) as u16,
-        //     // 0,
-        //     (new_saddr << 16 & 0xffff) as u16,
-        // );
-        // csum = csum_ipv4_l4(
-        //     csum,
-        //     (old_saddr >> 16) as u16,
-        //     // 0,
-        //     (new_saddr >> 16) as u16,
-        // );
-
-        // // daddr
-        // csum = csum_ipv4_l4(
-        //     csum,
-        //     (old_daddr << 16 & 0xffff) as u16,
-        //     // 0,
-        //     (new_daddr << 16 & 0xffff) as u16,
-        // );
-        // csum = csum_ipv4_l4(
-        //     csum,
-        //     (old_daddr >> 16) as u16,
-        //     // 0,
-        //     (new_daddr >> 16) as u16,
-        // );
-
-        // protocol
-        // csum = csum_ipv4_l4(csum, 0, 6);
-
-        // len
-        // _ = printk!("tot_len: %d, ihl: %d", (*iph).tot_len.swap_bytes(), (*iph).ihl());
-        // _ = printk!("ihl << 2: %d", (*iph).ihl() << 2);
-        // _ = printk!("calculated tcp len: %d", tcplen);
-        // csum = csum_ipv4_l4(csum, 0, tcplen);
-
         for (i, b) in bytes.iter().enumerate() {
             if *b != old_bytes[i] {
                 if DEBUG_CSUM {
@@ -215,6 +179,12 @@ pub fn kern(ctx: XdpContext) -> XdpResult {
                         if (*iph).daddr == vip && t.dest() == vport {
                             _ = printk!("hit rule");
                             _ = printk!("kern: cip: %x", cip);
+
+                            let client_conn = conntrack::ClientConn {
+                                proto: 0x6,
+                                src: cip,
+                                port: cport,
+                            };
 
                             let clientinfo = &mut ClientInfo::new();
                             clientinfo.ip = cip;
